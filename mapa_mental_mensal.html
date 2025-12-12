@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa Mental - Fluxo Mensal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
+            padding: 2rem;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mindmap-container {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 1600px;
+            width: 100%;
+        }
+
+        .title {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .title h1 {
+            color: #0ea5e9;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .title p {
+            color: #6b7280;
+            font-size: 1.1rem;
+        }
+
+        .mindmap {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .center-node {
+            background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
+            color: white;
+            padding: 2rem 3rem;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(14, 165, 233, 0.4);
+            margin: 0 auto 3rem;
+            max-width: 600px;
+        }
+
+        .center-node h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .center-node .subtitle {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .branches {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .branch {
+            background: #f9fafb;
+            border-radius: 15px;
+            padding: 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            overflow: hidden;
+        }
+
+        .branch:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .branch-header {
+            padding: 1.5rem;
+            font-weight: bold;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .branch-header.cyan {
+            background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+            color: white;
+        }
+
+        .branch-header.blue {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+        }
+
+        .branch-header.green {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+
+        .branch-header.amber {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+        }
+
+        .branch-header.red {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+        }
+
+        .branch-header.purple {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            color: white;
+        }
+
+        .branch-header.teal {
+            background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
+            color: white;
+        }
+
+        .branch-content {
+            padding: 1.5rem;
+        }
+
+        .sub-item {
+            margin-bottom: 1.5rem;
+            padding-left: 1rem;
+            border-left: 3px solid #e5e7eb;
+        }
+
+        .sub-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .sub-title {
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .sub-detail {
+            color: #6b7280;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-bottom: 0.25rem;
+        }
+
+        .highlight {
+            background: #fef3c7;
+            padding: 0.75rem;
+            border-radius: 8px;
+            margin-top: 0.5rem;
+            border-left: 3px solid #f59e0b;
+        }
+
+        .highlight.red {
+            background: #fee2e2;
+            border-left-color: #ef4444;
+        }
+
+        .highlight.green {
+            background: #dcfce7;
+            border-left-color: #22c55e;
+        }
+
+        .highlight.blue {
+            background: #dbeafe;
+            border-left-color: #3b82f6;
+        }
+
+        .highlight.cyan {
+            background: #cffafe;
+            border-left-color: #06b6d4;
+        }
+
+        .highlight.purple {
+            background: #f3e8ff;
+            border-left-color: #a855f7;
+        }
+
+        .icon {
+            width: 24px;
+            height: 24px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-top: 0.5rem;
+        }
+
+        .badge.cyan {
+            background: #cffafe;
+            color: #0891b2;
+        }
+
+        .badge.red {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .badge.green {
+            background: #dcfce7;
+            color: #059669;
+        }
+
+        .badge.amber {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .estrutura-grid {
+            display: grid;
+            gap: 0.75rem;
+        }
+
+        .estrutura-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: white;
+            border-radius: 8px;
+            border-left: 3px solid #06b6d4;
+        }
+
+        .calendario-mes {
+            background: white;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .calendario-mes-header {
+            font-weight: 600;
+            color: #0891b2;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .calendario-datas {
+            display: grid;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: #4b5563;
+        }
+
+        .data-item {
+            padding: 0.5rem;
+            background: #f0fdfa;
+            border-radius: 6px;
+            border-left: 2px solid #14b8a6;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 1rem;
+            }
+
+            .branch:hover {
+                transform: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .mindmap-container {
+                padding: 1.5rem;
+            }
+
+            .title h1 {
+                font-size: 1.75rem;
+            }
+
+            .center-node h2 {
+                font-size: 1.5rem;
+            }
+
+            .branches {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="mindmap-container">
+        <div class="title">
+            <h1>🧠 Mapa Mental</h1>
+            <p>Fluxo Mensal - Novos Terapeutas</p>
+        </div>
+
+        <div class="mindmap">
+            <!-- Centro -->
+            <div class="center-node">
+                <h2>FLUXO MENSAL RECORRENTE</h2>
+                <p class="subtitle">Novos Terapeutas • Care Plus by Genial Care</p>
+                <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 2px solid rgba(255,255,255,0.3);">
+                    <div style="font-size: 0.9rem; opacity: 0.95;">
+                        <strong>Turmas Mensais:</strong> 1 a 3 terapeutas por mês
+                    </div>
+                </div>
+            </div>
+
+            <!-- Estrutura Geral -->
+            <div class="branch">
+                <div class="branch-header cyan">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                    </svg>
+                    🏗️ ESTRUTURA GERAL
+                </div>
+                <div class="branch-content">
+                    <div class="estrutura-grid">
+                        <div class="estrutura-item">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#06b6d4" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            <span>Mesmos conteúdos do fluxo de janeiro</span>
+                        </div>
+                        <div class="estrutura-item">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#06b6d4" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            <span>180 min online + 5h30 presencial</span>
+                        </div>
+                        <div class="estrutura-item">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#06b6d4" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            <span>Turmas fechadas mensalmente</span>
+                        </div>
+                        <div class="estrutura-item">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#06b6d4" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            <span><strong>Previsão:</strong> 1 a 3 terapeutas/mês</span>
+                        </div>
+                    </div>
+                    <div class="highlight cyan" style="margin-top: 1rem;">
+                        <strong>📋 Padrão replicável</strong> para todos os meses
+                    </div>
+                </div>
+            </div>
+
+            <!-- Branches principais -->
+            <div class="branches">
+                <!-- Acesso ao Curso -->
+                <div class="branch">
+                    <div class="branch-header blue">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                        🔑 ACESSO AO CURSO
+                    </div>
+                    <div class="branch-content">
+                        <div class="sub-item">
+                            <div class="sub-title">Processo de Liberação</div>
+                            <div class="sub-detail">✓ Liberação manual por João</div>
+                            <div class="sub-detail">✓ E-mail individual com instruções</div>
+                            <div class="sub-detail">✓ Curso igual ao de janeiro</div>
+                            <div class="highlight blue" style="margin-top: 0.75rem;">
+                                <strong>🔄 Processo padronizado</strong> para cada nova turma mensal
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Curso Online -->
+                <div class="branch">
+                    <div class="branch-header green">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                        </svg>
+                        📚 CURSO ONLINE - 180 MIN
+                    </div>
+                    <div class="branch-content">
+                        <div class="sub-item">
+                            <div class="sub-title">Prazo e Certificação</div>
+                            <div class="highlight green">
+                                <strong>⏱️ Prazo:</strong> 1 mês após início
+                            </div>
+                            <div class="sub-detail" style="margin-top: 0.5rem;">✓ Certificado automático</div>
+                        </div>
+                        
+                        <div class="sub-item">
+                            <div class="sub-title">Acompanhamento por João</div>
+                            <div class="sub-detail">👀 Acompanhamento diário</div>
+                            <div class="highlight" style="background: #fef3c7; border-left-color: #f59e0b;">
+                                <strong>🟡 Sinal amarelo:</strong> 1 dia sem progresso
+                            </div>
+                            <div class="highlight red" style="margin-top: 0.5rem;">
+                                <strong>🔴 Sinal vermelho:</strong> Contato direto
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Treinamento Presencial -->
+                <div class="branch">
+                    <div class="branch-header amber">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                        🏢 TREINAMENTO PRESENCIAL
+                    </div>
+                    <div class="branch-content">
+                        <div class="sub-item">
+                            <div class="sub-title">Carga Horária (5h30 total)</div>
+                            <div class="sub-detail"><strong>Manhã:</strong> 10h30 – 12h00 (1h30)</div>
+                            <div class="sub-detail"><strong>Tarde:</strong> 13h30 – 17h30 (4h)</div>
+                            <div class="sub-detail" style="margin-top: 0.5rem;">✓ Ministrado pela Care Plus</div>
+                            <div class="sub-detail">✓ Lista de presença pelo João</div>
+                        </div>
+
+                        <div class="sub-item">
+                            <div class="sub-title">Calendário Mensal</div>
+                            <div class="calendario-mes">
+                                <div class="calendario-mes-header">
+                                    📅 Turma Principal
+                                </div>
+                                <div class="calendario-datas">
+                                    <div class="data-item">
+                                        <strong>Data fixa no início do mês</strong><br>
+                                        Primeira semana de cada mês
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="calendario-mes">
+                                <div class="calendario-mes-header">
+                                    🔄 Turma de Reposição
+                                </div>
+                                <div class="calendario-datas">
+                                    <div class="data-item">
+                                        <strong>Meio do mês</strong><br>
+                                        Segunda ou terceira semana
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="highlight red">
+                                <strong>⚠️ EXCEÇÃO - Fevereiro/2026:</strong><br>
+                                SEM turma de reposição (Carnaval)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Acompanhamento WhatsApp -->
+                <div class="branch">
+                    <div class="branch-header green">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                        </svg>
+                        💬 ACOMPANHAMENTO WHATSAPP
+                    </div>
+                    <div class="branch-content">
+                        <div class="sub-item">
+                            <div class="sub-title">Grupo com João</div>
+                            <div class="sub-detail">✓ Lembretes regulares</div>
+                            <div class="sub-detail">✓ Suporte contínuo</div>
+                            <div class="sub-detail">✓ Protocolo de atraso ativo</div>
+                            <div class="highlight green" style="margin-top: 0.75rem;">
+                                <strong>📱 Comunicação ágil</strong> para cada turma mensal
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Registro Interno -->
+                <div class="branch">
+                    <div class="branch-header purple">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                            <polyline points="10 9 9 9 8 9"></polyline>
+                        </svg>
+                        📊 REGISTRO INTERNO
+                    </div>
+                    <div class="branch-content">
+                        <div class="sub-item">
+                            <div class="sub-title">Planilha "Dados | Treinamento"</div>
+                            <div class="sub-detail">📋 Aba mensal Care Plus</div>
+                            <div class="sub-detail">🔄 Atualização a cada turma</div>
+                            <div class="highlight purple" style="margin-top: 0.75rem;">
+                                <strong>📈 Histórico mensal</strong> de todas as turmas e terapeutas
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Diferenças do Fluxo Janeiro -->
+                <div class="branch">
+                    <div class="branch-header teal">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="8.5" cy="7" r="4"></circle>
+                            <polyline points="17 11 19 13 23 9"></polyline>
+                        </svg>
+                        🔄 CARACTERÍSTICAS ÚNICAS
+                    </div>
+                    <div class="branch-content">
+                        <div class="sub-item">
+                            <div class="sub-title">Diferenças vs Janeiro/2026</div>
+                            <div class="sub-detail">🔹 Grupos menores (1-3 terapeutas)</div>
+                            <div class="sub-detail">🔹 Frequência mensal recorrente</div>
+                            <div class="sub-detail">🔹 Prazo de 1 mês (vs 60 dias)</div>
+                            <div class="sub-detail">🔹 Turma de reposição disponível</div>
+                            <div class="sub-detail">🔹 Data fixa no calendário</div>
+                        </div>
+
+                        <div class="sub-item">
+                            <div class="sub-title">Vantagens do Modelo</div>
+                            <div class="highlight cyan">
+                                <strong>✓ Escalável:</strong> Permite crescimento gradual<br>
+                                <strong>✓ Flexível:</strong> Duas datas por mês<br>
+                                <strong>✓ Previsível:</strong> Calendário fixo
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Rodapé -->
+            <div style="margin-top: 2rem; padding: 1.5rem; background: #f0fdfa; border-radius: 12px; text-align: center; border: 2px solid #5eead4;">
+                <p style="color: #115e59; font-size: 0.9rem; margin-bottom: 0.5rem;">
+                    <strong style="color: #0f766e;">Responsável pelo Fluxo:</strong> João
+                </p>
+                <p style="color: #0d9488; font-size: 0.85rem; margin-bottom: 0.75rem;">
+                    Modelo Mensal Recorrente • 1 a 3 Terapeutas/Mês
+                </p>
+                <div style="display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap;">
+                    <span class="badge green">180 min Online</span>
+                    <span class="badge amber">5h30 Presencial</span>
+                    <span class="badge cyan">Prazo: 1 Mês</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
