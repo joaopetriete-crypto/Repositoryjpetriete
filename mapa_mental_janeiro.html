@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa Mental - Fluxo Janeiro 2026</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 2rem;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mindmap-container {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 1600px;
+            width: 100%;
+        }
+
+        .title {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .title h1 {
+            color: #667eea;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .title p {
+            color: #6b7280;
+            font-size: 1.1rem;
+        }
+
+        .mindmap {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .center-node {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem 3rem;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+            margin: 0 auto 3rem;
+            max-width: 600px;
+        }
+
+        .center-node h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .center-node .subtitle {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .branches {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .branch {
+            background: #f9fafb;
+            border-radius: 15px;
+            padding: 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            overflow: hidden;
+        }
+
+        .branch:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .branch-header {
+            padding: 1.5rem;
+            font-weight: bold;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .branch-header.purple {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            color: white;
+        }
+
+        .branch-header.blue {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+        }
+
+        .branch-header.green {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+
+        .branch-header.amber {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+        }
+
+        .branch-header.red {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+        }
+
+        .branch-header.indigo {
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            color: white;
+        }
+
+        .branch-content {
+            padding: 1.5rem;
+        }
+
+        .sub-item {
+            margin-bottom: 1.5rem;
+            padding-left: 1rem;
+            border-left: 3px solid #e5e7eb;
+        }
+
+        .sub-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .sub-title {
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .sub-detail {
+            color: #6b7280;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-bottom: 0.25rem;
+        }
+
+        .highlight {
+            background: #fef3c7;
+            padding: 0.75rem;
+            border-radius: 8px;
+            margin-top: 0.5rem;
+            border-left: 3px solid #f59e0b;
+        }
+
+        .highlight.red {
+            background: #fee2e2;
+            border-left-color: #ef4444;
+        }
+
+        .highlight.green {
+            background: #dcfce7;
+            border-left-color: #22c55e;
+        }
+
+        .highlight.blue {
+            background: #dbeafe;
+            border-left-color: #3b82f6;
+        }
+
+        .icon {
+            width: 24px;
+            height: 24px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-top: 0.5rem;
+        }
+
+        .badge.purple {
+            background: #ede9fe;
+            color: #7c3aed;
+        }
+
+        .badge.red {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .badge.green {
+            background: #dcfce7;
+            color: #059669;
+        }
+
+        .objetivos {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .objetivo-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: white;
+            border-radius: 8px;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 1rem;
+            }
+
+            .branch:hover {
+                transform: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .mindmap-container {
+                padding: 1.5rem;
+            }
+
+            .title h1 {
+                font-size: 1.75rem;
+            }
+
+            .center-node h2 {
+                font-size: 1.5rem;
+            }
+
+            .branches {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="mindmap-container">
+        <div class="title">
+            <h1>🧠 Mapa Mental</h1>
+            <p>Fluxo Janeiro 2026 - Terapeutas da Rede</p>
+        </div>
+
+        <div class="mindmap">
+            <!-- Centro -->
+            <div class="center-node">
+                <h2>FLUXO JANEIRO/2026</h2>
+                <p class="subtitle">Terapeutas da Rede • Care Plus by Genial Care</p>
+                <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 2px solid rgba(255,255,255,0.3);">
+                    <div style="font-size: 0.9rem; opacity: 0.95;">
+                        <strong>Início dos Atendimentos:</strong> 12/01/2026
+                    </div>
+                </div>
+            </div>
+
+            <!-- Objetivo -->
+            <div class="branch">
+                <div class="branch-header purple">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                    </svg>
+                    🎯 OBJETIVOS
+                </div>
+                <div class="branch-content">
+                    <div class="objetivos">
+                        <div class="objetivo-item">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            <span>Garantir conclusão do curso (180 min online)</span>
+                        </div>
+                        <div class="objetivo-item">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            <span>Garantir participação no presencial (5h30)</span>
+                        </div>
+                        <div class="objetivo-item">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            <span>Liberar terapeutas para atendimentos em 12/01</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Branches principais -->
+            <div class="branches">
+                <!-- Acesso à Plataforma -->
+                <div class="branch">
+                    <div class="branch-header blue">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                        🔑 ACESSO À PLATAFORMA
+                    </div>
+                    <div class="branch-content">
+                        <div class="sub-item">
+                            <div class="sub-title">Plataforma HotSchool</div>
+                            <div class="sub-detail">✓ Liberação manual por João</div>
+                            <div class="sub-detail">✓ E-mail individual com instruções</div>
+                            <div class="highlight blue">
+                                <strong>📅 Disponível a partir de:</strong> 19/12/2025
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Curso Online -->
+                <div class="branch">
+                    <div class="branch-header green">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                        </svg>
+                        📚 CURSO ONLINE - 180 MIN
+                    </div>
+                    <div class="branch-content">
+                        <div class="sub-item">
+                            <div class="sub-title">Estrutura</div>
+                            <div class="sub-detail">• 1 módulo único</div>
+                            <div class="sub-detail">• Sem avaliação</div>
+                            <div class="sub-detail">• Certificado automático</div>
+                        </div>
+                        
+                        <div class="sub-item">
+                            <div class="sub-title">Prazos</div>
+                            <div class="highlight green">
+                                <strong>Início recomendado:</strong> 19/12 até 06/01
+                            </div>
+                            <div class="highlight" style="margin-top: 0.5rem;">
+                                <strong>Prazo final:</strong> 19/02/2026 (60 dias)
+                            </div>
+                        </div>
+
+                        <div class="sub-item">
+                            <div class="sub-title">Acompanhamento por João</div>
+                            <div class="sub-detail">📊 Registro automático do progresso</div>
+                            <div class="sub-detail">👀 Acompanhamento diário</div>
+                            <div class="highlight" style="background: #fef3c7; border-left-color: #f59e0b;">
+                                <strong>🟡 Sinal amarelo:</strong> 1 dia sem progresso
+                            </div>
+                            <div class="highlight red" style="margin-top: 0.5rem;">
+                                <strong>🔴 Sinal vermelho:</strong> Contato direto
+                            </div>
+                            <div class="highlight red" style="margin-top: 0.5rem;">
+                                <strong>⚠️ Consequência:</strong> Possível substituição/descredenciamento
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Treinamento Presencial -->
+                <div class="branch">
+                    <div class="branch-header amber">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                        </svg>
+                        🏢 TREINAMENTO PRESENCIAL
+                    </div>
+                    <div class="branch-content">
+                        <div class="sub-item">
+                            <div class="sub-title">Data e Local</div>
+                            <div class="highlight blue">
+                                <strong>📅 Data:</strong> 07/01/2026<br>
+                                <strong>📍 Local:</strong> Casa Genial Morumbi
+                            </div>
+                            <span class="badge red">OBRIGATÓRIO</span>
+                        </div>
+
+                        <div class="sub-item">
+                            <div class="sub-title">Horários (5h30 total)</div>
+                            <div class="sub-detail"><strong>Manhã:</strong> 10h30 – 12h00 (1h30)</div>
+                            <div class="sub-detail"><strong>Tarde:</strong> 13h30 – 17h30 (4h)</div>
+                        </div>
+
+                        <div class="sub-item">
+                            <div class="sub-title">Ministrado pela Care Plus</div>
+                            <div class="sub-detail">✓ Lista de presença: João</div>
+                            <div class="sub-detail">✓ Registro na planilha</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Remuneração -->
+                <div class="branch">
+                    <div class="branch-header indigo">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="1" x2="12" y2="23"></line>
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                        </svg>
+                        💰 REMUNERAÇÃO
+                    </div>
+                    <div class="branch-content">
+                        <div class="sub-item">
+                            <div class="sub-detail">✓ Valor equivalente à sessão</div>
+                            <div class="sub-detail">✓ Registro automático</div>
+                            <div class="highlight green" style="margin-top: 0.75rem;">
+                                <strong>Total de horas remuneradas:</strong><br>
+                                • 180 min online (3h)<br>
+                                • 5h30 presencial<br>
+                                • <strong>Total: 8h30</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Acompanhamento WhatsApp -->
+                <div class="branch">
+                    <div class="branch-header green">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                        </svg>
+                        💬 ACOMPANHAMENTO WHATSAPP
+                    </div>
+                    <div class="branch-content">
+                        <div class="sub-item">
+                            <div class="sub-title">Grupo com João</div>
+                            <div class="sub-detail">✓ Lembretes regulares</div>
+                            <div class="sub-detail">✓ Suporte contínuo</div>
+                            <div class="sub-detail">✓ Protocolo de atraso ativo</div>
+                            <div class="highlight">
+                                <strong>Monitoramento diário</strong> do progresso de cada terapeuta
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Registro Interno -->
+                <div class="branch">
+                    <div class="branch-header red">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                            <polyline points="10 9 9 9 8 9"></polyline>
+                        </svg>
+                        📊 REGISTRO INTERNO
+                    </div>
+                    <div class="branch-content">
+                        <div class="sub-item">
+                            <div class="sub-title">Planilha "Dados | Treinamento"</div>
+                            <div class="sub-detail">📋 Aba específica Care Plus</div>
+                            <div class="sub-detail">🔄 Atualização semanal por João</div>
+                            <div class="highlight blue" style="margin-top: 0.75rem;">
+                                <strong>Controle centralizado</strong> de todo o processo de treinamento
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Rodapé -->
+            <div style="margin-top: 2rem; padding: 1.5rem; background: #f3f4f6; border-radius: 12px; text-align: center;">
+                <p style="color: #6b7280; font-size: 0.9rem; margin-bottom: 0.5rem;">
+                    <strong style="color: #1f2937;">Responsável pelo Fluxo:</strong> João
+                </p>
+                <p style="color: #9ca3af; font-size: 0.85rem;">
+                    5 Terapeutas • Psicólogos ABA, TOs e Fonos • Care Plus by Genial Care
+                </p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
